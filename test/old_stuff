@@ -1,0 +1,55 @@
+    def score_straight_flush(hand) do
+    unless is_flush(hand), do: 0, else: {9, hand |> sort_hand_values |> score_straight |> elem(1)}
+  end
+
+  def score_four_of_a_kind(sorted_values) do
+    case sorted_values do
+      [a,a,a,a,b] -> {8,a,b}
+      [b,a,a,a,a] -> {8,a,b}
+      _ -> 0
+    end
+  end
+
+  def score_full_house(sorted_values) do
+    case sorted_values do
+      [a,a,a,b,b] -> {7,a,b}
+      [a,a,b,b,b] -> {7,b,a}
+      _ -> 0
+    end
+  end
+
+  def score_flush(hand) do
+    if hand |> is_flush, do: {6, hand |> sort_hand_values |> Enum.max}, else: 0
+  end 
+  def score_three_of_a_kind(sorted_values) do
+    case sorted_values do
+      [a,a,a,b,c] -> {4, a, c, b}
+      [a,b,c,c,c] -> {4, c, b, a}
+      [a,b,b,b,c] -> {4, b, c, a}
+      _ -> 0
+    end
+  end
+  
+  def score_two_pair(sorted_values) do
+    case sorted_values do
+      [a,a,b,b,c] -> {3, b, a, c}
+      [a,b,b,c,c] -> {3, c, b, a}
+      [a,a,b,c,c] -> {3, c, a, b}
+      _ -> 0
+    end
+  end
+
+  def score_one_pair(sorted_values) do
+    case sorted_values do
+      [a,a,b,c,d] -> {2, a, d, c, b}
+      [a,b,b,c,d] -> {2, b, d, c, a}
+      [a,b,c,c,d] -> {2, c, d, b, a}
+      [a,b,c,d,d] -> {2, d, c, b, a}
+      _ -> 0
+    end
+  end
+
+  def score_high_card(sorted_values) do
+    [a,b,c,d,e] = sorted_values
+    {1,e,d,c,b,a}  
+  end
