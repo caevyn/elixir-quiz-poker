@@ -62,13 +62,7 @@ defmodule Poker do
   def score_hand([a,b,c,c,d]),  do: {2, c, d, b, a}
   def score_hand([a,b,c,d,d]),  do: {2, d, c, b, a}
   
-  def score_hand([a,a,b,c,d]),  do: {2, a, d, c, b}
-  def score_hand([a,b,b,c,d]),  do: {2, b, d, c, a}
-  def score_hand([a,b,c,c,d]),  do: {2, c, d, b, a}
-  def score_hand([a,b,c,d,d]),  do: {2, d, c, b, a}
-
   def score_hand([a,b,c,d,e]),  do: {1, e, d, c, b, a}
-
   
   @doc "Returns true if the hand is a flush, otherwise false"
   def is_flush(hand) do
