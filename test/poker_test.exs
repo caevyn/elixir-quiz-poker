@@ -89,4 +89,10 @@ defmodule PokerTest do
   test "three of a kind with 3 kings returns {4,13,5,4}" do
     assert Poker.score_hand({{5, :hearts},{"k", :clubs},{"k", :spades},{"k", :diamonds},{4, :clubs}}) == {4,13,5,4}
   end
+
+  test "Winning hand is winner" do
+    IO.puts(Poker.deal(6))
+    hands = Poker.deal(6)
+    assert Poker.find_winning_hand(hands) == 1
+  end
 end

@@ -18,28 +18,28 @@ defmodule Poker do
     end
   end
   
-  @doc "Simulates dealing 5 cards to each player, 1 at a time in turn."
+  @doc "Simulates dealing 5 cards to each player"
   def deal(num_players) do
   	get_shuffled_deck 
   	  |> Enum.take(num_players * 5) 
   	  |> Enum.chunk(5)
-  	  |> List.zip  	      
+  	  |> List.to_tuple
   end
 
   def find_winning_hand(hands) do
-      
+      scores = hands |> Tuple.to_list |> Enum.map(&get_hand_value/1)
+      #compare tuples, find winner...
   end
 
-  def score_hand(hand) when is_tuple(hand) do
-    sorted_values = hand |> sort_hand_values
-    if is_flush(hand) do
-      score = sorted_values |> score_straight
-      if score == 0, do: {6, sorted_values |> Enum.max}, else: {9, score |> elem(1)}
-    else
-      sorted_values |> score_hand
-    end
+  @doc """
+  Scores a hand, returning a tuple of scores. 
+  The first element scores the hand, the remaining elements are for breaking ties.
+  """
+  def get_hand_value(hand) do
+    values = hand |> sort_hand_values
+    if is_flush(hand), do: values |> score_flush, else: values |> score_hand
   end
-
+  
   def score_hand([a,a,a,a,b]),  do: {8, a, b}
   def score_hand([a,b,b,b,b]),  do: {8, b, a}
 
@@ -63,27 +63,19 @@ defmodule Poker do
   def score_hand([a,b,c,d,d]),  do: {2, d, c, b, a}
   
   def score_hand([a,b,c,d,e]),  do: {1, e, d, c, b, a}
-  
-  @doc "Returns true if the hand is a flush, otherwise false"
-  def is_flush(hand) do
-    hand 
-      |> Tuple.to_list 
-      |> Enum.uniq(fn{_,x} -> x end) 
-      |> Enum.count == 1
-  end 
 
-  @doc "Scores a straight. 0 if no straight, high card's score if a straight"
-  def score_straight(sorted_values) do
-    case sorted_values do
-      [2,3,4,5,14] -> {5, 5}
-      [a,_,_,_,e] when e - a == 4 -> {5, e}
-      _ -> 0
-    end
+  @doc "scores a flush. Checks for straight flush or regular flush. TODO: reduce voodoo" 
+  def score_flush(sorted_values) do
+    score = sorted_values |> score_hand
+    if score |> elem(0) == 5, do:  {9, score |> elem(1)}, else: {6, sorted_values |> Enum.max}
   end
+
+  @doc "Returns true if the hand is a flush, otherwise false"
+  def is_flush({{_,a}, {_,a}, {_,a}, {_,a}, {_,a}}), do: true
+  def is_flush(_), do: false 
 
   defp sort_hand_values(hand) do
     hand
-      |> Tuple.to_list
       |> Enum.map(&get_card_value/1)
       |> Enum.sort
   end
