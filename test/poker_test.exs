@@ -51,48 +51,49 @@ defmodule PokerTest do
   end 
 
   test "is flush is true when suit the same" do
-    assert Poker.is_flush({{3, :spades}, {2, :spades}, {4, :spades}, {5, :spades}, {6, :spades}})
+    assert Poker.is_flush([{3, :spades}, {2, :spades}, {4, :spades}, {5, :spades}, {6, :spades}])
   end
 
   test "is flush is false when suit not all the same" do
-    assert Poker.is_flush({{3, :hearts}, {2, :spades}, {4, :spades}, {5, :spades}, {6, :spades}}) == false
+    assert Poker.is_flush([{3, :hearts}, {2, :spades}, {4, :spades}, {5, :spades}, {6, :spades}]) == false
   end
 
   test "high 6 straight score is {5,6}" do
-    assert Poker.score_hand({{2, :hearts},{3, :hearts},{4, :clubs},{5, :clubs},{6, :clubs}}) == {5,6}
+    assert Poker.get_hand_value([{2, :hearts},{3, :hearts},{4, :clubs},{5, :clubs},{6, :clubs}]) == {5,6}
   end
 
   test "high K straight score is {5,13}" do
-    assert Poker.score_hand({{"j", :hearts},{"k", :hearts},{10, :clubs},{"q", :clubs},{9, :clubs}}) == {5,13}
+    assert Poker.get_hand_value([{"j", :hearts},{"k", :hearts},{10, :clubs},{"q", :clubs},{9, :clubs}]) == {5,13}
   end
   
   test "high A straight score is {5,14}" do
-    assert Poker.score_hand({{"j", :hearts},{"k", :hearts},{10, :clubs},{"q", :clubs},{"a", :clubs}}) == {5,14}
+    assert Poker.get_hand_value([{"j", :hearts},{"k", :hearts},{10, :clubs},{"q", :clubs},{"a", :clubs}]) == {5,14}
   end
 
   test "low A straight score is {5,5}" do
-    assert Poker.score_hand({{5, :hearts},{4, :hearts},{3, :clubs},{2, :clubs},{"a", :clubs}}) == {5,5}
+    assert Poker.get_hand_value([{5, :hearts},{4, :hearts},{3, :clubs},{2, :clubs},{"a", :clubs}]) == {5,5}
   end
 
   test "high K straight flush is {9,13}" do
-    assert Poker.score_hand({{"j", :clubs},{"k", :clubs},{10, :clubs},{"q", :clubs},{9, :clubs}}) == {9,13}
+    assert Poker.get_hand_value([{"j", :clubs},{"k", :clubs},{10, :clubs},{"q", :clubs},{9, :clubs}]) == {9,13}
   end
 
   test "four of a kind with four 4s returns {8,4,3}" do
-    assert Poker.score_hand({{4, :hearts},{4, :clubs},{4, :spades},{4, :diamonds},{3, :clubs}}) == {8,4,3}
+    assert Poker.get_hand_value([{4, :hearts},{4, :clubs},{4, :spades},{4, :diamonds},{3, :clubs}]) == {8,4,3}
   end
 
   test "full house with 3 kings and 2 4s returns {7,13,4}" do
-    assert Poker.score_hand({{4, :hearts},{"k", :clubs},{"k", :spades},{"k", :diamonds},{4, :clubs}}) == {7,13,4}
+    assert Poker.get_hand_value([{4, :hearts},{"k", :clubs},{"k", :spades},{"k", :diamonds},{4, :clubs}]) == {7,13,4}
   end
 
   test "three of a kind with 3 kings returns {4,13,5,4}" do
-    assert Poker.score_hand({{5, :hearts},{"k", :clubs},{"k", :spades},{"k", :diamonds},{4, :clubs}}) == {4,13,5,4}
+    assert Poker.get_hand_value([{5, :hearts},{"k", :clubs},{"k", :spades},{"k", :diamonds},{4, :clubs}]) == {4,13,5,4}
   end
 
-  test "Winning hand is winner" do
-    IO.puts(Poker.deal(6))
-    hands = Poker.deal(6)
-    assert Poker.find_winning_hand(hands) == 1
+  test "Flush beats straight and high card" do
+    hands = [[{2, :clubs},{4, :clubs},{6,:clubs},{9, :clubs},{"k", :clubs}],
+             [{2, :hearts},{3, :diamonds},{4,:hearts},{5, :hearts},{6, :hearts}],
+             [{2, :clubs},{4, :clubs},{6,:clubs},{9, :clubs},{"k", :diamonds}]]
+    assert Poker.find_winning_hand(hands) == 0
   end
 end

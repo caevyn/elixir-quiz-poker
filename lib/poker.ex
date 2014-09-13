@@ -4,7 +4,8 @@ defmodule Poker do
   def get_shuffled_deck do
     suits = Stream.cycle([:clubs, :spades, :diamonds, :hearts]) |> Enum.take 52
     cards = Stream.cycle(get_card_ranks) |> Enum.take 52
-    cards |> Enum.zip suits |> Enum.shuffle
+    :random.seed(:os.timestamp)
+    cards |> Enum.zip suits |> Enum.shuffle #doesn't work real well...
   end
 
   @doc "compares two cards"
@@ -23,13 +24,19 @@ defmodule Poker do
   	get_shuffled_deck 
   	  |> Enum.take(num_players * 5) 
   	  |> Enum.chunk(5)
-  	  |> List.to_tuple
   end
 
+  @doc "returns the index of the winning hand. E.g. 0 for player 1"
   def find_winning_hand(hands) do
-      scores = hands |> Tuple.to_list |> Enum.map(&get_hand_value/1)
-      #compare tuples, find winner...
+      hands 
+      |> Enum.map(&get_hand_value/1)
+      |> Enum.map(&Tuple.to_list/1) 
+      |> Enum.with_index 
+      |> Enum.sort 
+      |> List.last 
+      |> elem(1)      
   end
+ 
 
   @doc """
   Scores a hand, returning a tuple of scores. 
@@ -71,7 +78,7 @@ defmodule Poker do
   end
 
   @doc "Returns true if the hand is a flush, otherwise false"
-  def is_flush({{_,a}, {_,a}, {_,a}, {_,a}, {_,a}}), do: true
+  def is_flush([{_,a}, {_,a}, {_,a}, {_,a}, {_,a}]), do: true
   def is_flush(_), do: false 
 
   defp sort_hand_values(hand) do
