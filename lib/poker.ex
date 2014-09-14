@@ -4,8 +4,7 @@ defmodule Poker do
   def get_shuffled_deck do
     suits = Stream.cycle([:clubs, :spades, :diamonds, :hearts]) |> Enum.take 52
     cards = Stream.cycle(get_card_ranks) |> Enum.take 52
-    :random.seed(:os.timestamp)
-    cards |> Enum.zip suits |> Enum.shuffle #doesn't work real well...
+    (cards |> Enum.zip suits) |> Enum.shuffle
   end
 
   @doc "compares two cards"
