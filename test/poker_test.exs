@@ -75,6 +75,10 @@ defmodule PokerTest do
     assert Hand.get_hand_value([{2, :clubs},{2, :hearts},{2,:diamonds},{9, :clubs},{"k", :clubs}]) == {4,2,13,9}
   end
 
+  test "Ace high royal Flush gets {9,14}" do
+    assert Hand.get_hand_value([{10, :clubs},{"j", :clubs},{"q",:clubs},{"k", :clubs},{"a", :clubs}]) == {9,14}
+  end
+
   test "Flush beats straight and high card" do
     hands = [[{2, :clubs},{4, :clubs},{6,:clubs},{9, :clubs},{"k", :clubs}],
              [{2, :hearts},{3, :diamonds},{4,:hearts},{5, :hearts},{6, :hearts}],
@@ -95,4 +99,51 @@ defmodule PokerTest do
              [{2, :clubs},{4, :clubs},{6,:clubs},{9, :clubs},{"k", :diamonds}]]
     assert Poker.find_winning_hand(hands) == 0
   end
+
+  test "Discard 4 cards if high card hand" do
+    hand = [{2, :clubs},{8, :hearts},{7,:diamonds},{9, :clubs},{"k", :clubs}]
+    assert AI.discard(hand) == {[{"k", :clubs}],[{2, :clubs},{8, :hearts},{7,:diamonds},{9, :clubs}]}
+  end
+
+  test "Keep all cards if royal flush" do
+    hand = [{10, :clubs},{"j", :clubs},{"q",:clubs},{"k", :clubs},{"a", :clubs}]
+    assert AI.discard(hand) == {hand,[]}
+  end
+
+  test "Keep all cards if straight" do
+    hand = [{2, :hearts},{3, :diamonds},{4,:hearts},{5, :hearts},{6, :hearts}]
+    assert AI.discard(hand) == {hand,[]}
+  end
+
+  test "Keep all cards if flush" do
+    hand = [{2, :hearts},{9, :hearts},{4,:hearts},{5, :hearts},{6, :hearts}]
+    assert AI.discard(hand) == {hand,[]}
+  end
+
+  test "Keep all cards if full house" do
+    hand = [{2, :hearts},{2, :clubs},{2,:diamonds},{5, :hearts},{5, :clubs}]
+    assert AI.discard(hand) == {hand,[]}
+  end
+
+  test "Four of kind throw away spare card" do
+    hand = [{2, :hearts},{2, :clubs},{2,:diamonds},{2, :spades},{5, :clubs}]
+    assert AI.discard(hand) == {[{2, :hearts},{2, :clubs},{2,:diamonds},{2, :spades}],[{5, :clubs}]}
+  end
+
+  test "3 of a kind throw away lowest remaining card" do
+    hand = [{2, :hearts},{2, :clubs},{2,:diamonds},{3, :spades},{9, :clubs}]
+    assert AI.discard(hand) == {[{2, :hearts},{2, :clubs},{2,:diamonds},{9, :clubs}],[{3, :spades}]}
+  end
+
+  test "2 of a kind throw away 2 lowest remaining card" do
+    hand = [{2, :hearts},{2, :clubs},{5,:diamonds},{3, :spades},{9, :clubs}]
+    assert AI.discard(hand) == {[{2, :hearts},{2, :clubs},{9, :clubs}],[{5,:diamonds},{3, :spades}]}
+  end
+
+  test "High card throw away 4 lowest remaining cards" do
+    hand = [{2, :hearts},{6, :clubs},{5,:diamonds},{3, :spades},{9, :clubs}]
+    assert AI.discard(hand) == {[{9, :clubs}],[{2, :hearts},{6, :clubs},{5,:diamonds},{3, :spades}]}
+  end
+
+
 end

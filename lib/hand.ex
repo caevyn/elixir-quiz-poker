@@ -19,7 +19,7 @@
   defp score_hand([a,a,b,b,b]),  do: {7, b, a}
 
   defp score_hand([2,3,4,5,14]), do: {5, 5}
-  defp score_hand([a,b,c,d,e]) when e - d == 1 and d - c == 1 and c - b == 1 and b - a == 1, do: {5, e}  
+  defp score_hand([a,b,c,d,e]) when e - d == 1 and d - c == 1 and c - b == 1 and b - a == 1, do: {5, e}
   
   defp score_hand([a,a,a,b,c]),  do: {4, a, c, b}
   defp score_hand([a,b,c,c,c]),  do: {4, c, b, a}
