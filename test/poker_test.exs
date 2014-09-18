@@ -125,9 +125,14 @@ defmodule PokerTest do
     assert AI.discard(hand) == {hand,[]}
   end
 
-  test "Four of kind throw away spare card" do
+  test "Four of kind throw away spare card if less than 8" do
     hand = [{2, :hearts},{2, :clubs},{2,:diamonds},{2, :spades},{5, :clubs}]
     assert AI.discard(hand) == {[{2, :hearts},{2, :clubs},{2,:diamonds},{2, :spades}],[{5, :clubs}]}
+  end
+
+  test "Four of kind throw keep spare card if greater than 8" do
+    hand = [{2, :hearts},{2, :clubs},{2,:diamonds},{2, :spades},{9, :clubs}]
+    assert AI.discard(hand) == {[{2, :hearts},{2, :clubs},{2,:diamonds},{2, :spades},{9, :clubs}], []}
   end
 
   test "3 of a kind throw away lowest remaining card" do
